@@ -4,27 +4,27 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TITLE:
-        description: 'Custom Build Title'
+        description: 'Skyline Kernel (PS Edition) Builder'
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/itisFarzin/kernel_daria_mt6877'
+        default: 'https://github.com/PS-Professional/platform_kernel_xiaomi_vayu'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'zahedan-ksu'
+        default: 'main'
       CODENAME:
         description: 'Phone Codename'
-        default: 'k6877v1_64_k419'
+        default: 'vayu_user'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/itisFarzin/AnyKernel3'
+        default: 'https://github.com/PS-Professional/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'zahedan'
+        default: 'master'
         required: false
       SEND_NOTIFICATION:
         description: 'Send Notification'
@@ -33,11 +33,11 @@ on:
       ENABLE_KERNELSU:
         description: 'KernelSU'
         type: boolean
-        default: true
+        default: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'
         type: boolean
-        default: false
+        default: true
 
 jobs:
   build:
