@@ -165,6 +165,8 @@ jobs:
           cp -f Image.gz-dtb AnyKernel3
         elif [ -e "Image.gz" ]; then
           cp -f Image.gz AnyKernel3
+        elif [ -e "Image" ]; then
+          cp -f Image AnyKernel3
         fi
 
         name=FlashableKernel-${{ github.event.inputs.CODENAME }}${{ fromJSON('["", "-KSU"]')[fromJSON(github.event.inputs.ENABLE_KERNELSU)] }}.zip
