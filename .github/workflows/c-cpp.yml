@@ -88,7 +88,6 @@ jobs:
     - name: Prepare the build environment
       run: |
         sudo apt-get update
-        sudo apt-get upgrade -y
         sudo apt-get install python2
         sudo apt-get install flex
         sudo apt-get install libncurses5
