@@ -37,6 +37,7 @@ on:
         - 'clang-r487747c'
         - 'clang-r498229b'
         - 'clang-r510928'
+        - 'clang-r522817'
       SEND_NOTIFICATION:
         description: 'Send Notification'
         type: boolean
@@ -88,14 +89,12 @@ jobs:
     - name: Prepare the build environment
       run: |
         sudo apt-get update
-        sudo apt-get install python2
-        sudo apt-get install flex
-        sudo apt-get install libncurses5
+        sudo apt-get install python2 libncurses5 flex
         
         git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android-msm-redbull-4.19-android14 --depth=1
         git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android-msm-redbull-4.19-android14 --depth=1
         
-        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/${{ github.event.inputs.CLANG_VERSION }}.tar.gz -O clang.tar.gz
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-15.0.0_r5/${{ github.event.inputs.CLANG_VERSION }}.tar.gz -O clang.tar.gz
         mkdir clang
         tar -xf clang.tar.gz -C clang
 
@@ -161,8 +160,10 @@ jobs:
         git clone --recursive --depth=1 ${{ github.event.inputs.ANYKERNEL_URL }} -b $anykernel_branch AnyKernel3
 
         if [ -e "Image-dtb" ]; then
-          cp -f Image-dtb AnyKernel3/Image
-        fi 
+          cp -f Image-dtb AnyKernel3
+        elif [ -e "Image" ]; then
+          cp -f Image AnyKernel3
+        fi
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
@@ -185,8 +186,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz-dtb
-          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz
+          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image-dtb
+          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtbo.img
           ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image
           ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/${{ steps.anykernel.outputs.zipname }}
         name: ${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
@@ -210,14 +211,14 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
-        name: Image.gz-dtb
-        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz-dtb
+        name: Image-dtb
+        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image-dtb
 
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
-        name: Image.gz
-        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz
+        name: dtbo.img
+        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtbo.img
 
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.ANYKERNEL_URL != '' && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
